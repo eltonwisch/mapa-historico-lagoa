@@ -60,11 +60,13 @@
 </head>
 <body>
 
-    <!-- Painel de Controle Flutuante -->
-    <div class="painel-controle">
-        <h4>🗺️ Mapa Antigo de Lagoa Vermelha</h4>
-        <p>Arraste a barra para ajustar a transparência e comparar o passado com o presente:</p>
-        <input type="range" min="0" max="100" value="70" class="slider" id="opacidade-slider">
+            // 2. Adiciona o mapa atual (CartoDB Positron) como base de fundo (Mais estável para HTTPS)
+        const mapaAtual = L.tileLayer('https://{s}://{z}/{x}/{y}{r}.png', {
+            attribution: '&copy; <a href="https://openstreetmap.org">OpenStreetMap</a> contributors &copy; <a href="https://carto.com">CARTO</a>',
+            subdomains: 'abcd',
+            maxZoom: 20
+        }).addTo(map);
+
     </div>
 
     <!-- Elemento onde o mapa será renderizado -->
