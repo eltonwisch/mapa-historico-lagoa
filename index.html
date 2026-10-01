@@ -1,181 +1,221 @@
-// Adicione estas novas vias ao array "features" do seu mapa interativo:
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mapa Histórico Interativo - Lagoa Vermelha, RS</title>
+    <!-- Links para a biblioteca Leaflet (Mapas Interativos) -->
+    <link rel="stylesheet" href="https://unpkg.com" />
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f4f4;
+        }
+        #map {
+            width: 100%;
+            height: 100vh;
+        }
+        /* Estilo do painel de controle de transparência */
+        .painel-controle {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 15px 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+            z-index: 1000;
+            max-width: 280px;
+            border: 1px solid #ddd;
+        }
+        .painel-controle h4 { 
+            margin: 0 0 8px 0; 
+            color: #333;
+            font-size: 16px;
+        }
+        .painel-controle p {
+            margin: 0 0 12px 0;
+            font-size: 13px;
+            color: #666;
+            line-height: 1.4;
+        }
+        .slider { 
+            width: 100%; 
+            cursor: pointer;
+            accent-color: #ff3333;
+        }
+        /* Estilização customizada dos Popups */
+        .leaflet-popup-content-header {
+            font-weight: bold;
+            font-size: 14px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 5px;
+            margin-bottom: 5px;
+            color: #ff3333;
+        }
+    </style>
+</head>
+<body>
 
-// ==========================================
-// FOLHA 8 e FOLHA 7 (ZONA NORTE / PETRÓPOLIS E GAÚCHA)
-// ==========================================
-{
-    "type": "Feature",
-    "properties": {
-        "nome_antigo": "Av. Presid. Vargas",
-        "nome_atual": "Avenida Presidente Vargas",
-        "bairro": "B. Gaúcha / Petrópolis",
-        "nota": "Eixo que cruza as folhas 8 e 7, conectando-se ao norte com a Avenida Afonso Pena."
-    },
-    "geometry": {
-        "type": "LineString",
-        "coordinates": [[-51.5165, -28.2380], [-51.5110, -28.2310]]
-    }
-},
-{
-    "type": "Feature",
-    "properties": {
-        "nome_antigo": "Rua Gerando Jacinto Ferreira",
-        "nome_atual": "Rua Gherardo Jacinto Ferreira",
-        "bairro": "B. Santo Isidoro / Gaúcha",
-        "nota": "Linha divisória que aparece de forma marcante na porção esquerda da Folha 8."
-    },
-    "geometry": {
-        "type": "LineString",
-        "coordinates": [[-51.5220, -28.2360], [-51.5160, -28.2355]]
-    }
-},
-{
-    "type": "Feature",
-    "properties": {
-        "nome_antigo": "Rua Petropolis I",
-        "nome_atual": "Rua Petrópolis",
-        "bairro": "B. Petrópolis",
-        "nota": "Via horizontal que corta o miolo residencial desenhado na Folha 7."
-    },
-    "geometry": {
-        "type": "LineString",
-        "coordinates": [[-51.5140, -28.2330], [-51.5080, -28.2335]]
-    }
-},
+    <!-- Painel de Controle Flutuante -->
+    <div class="painel-controle">
+        <h4>🗺️ Mapa Antigo de Lagoa Vermelha</h4>
+        <p>Arraste a barra para ajustar a transparência e comparar o passado com o presente:</p>
+        <input type="range" min="0" max="100" value="70" class="slider" id="opacidade-slider">
+    </div>
 
-// ==========================================
-// FOLHA 12 (BAIRRO SÃO JOSÉ - SETOR OESTE)
-// ==========================================
-{
-    "type": "Feature",
-    "properties": {
-        "nome_antigo": "Rua Uruguai",
-        "nome_atual": "Rua Uruguai",
-        "bairro": "B. São José",
-        "nota": "Delimita a borda superior do pequeno loteamento planejado na Folha 12."
-    },
-    "geometry": {
-        "type": "LineString",
-        "coordinates": [[-51.5340, -28.2390], [-51.5280, -28.2392]]
-    }
-},
-{
-    "type": "Feature",
-    "properties": {
-        "nome_antigo": "Rua Paraguai",
-        "nome_atual": "Rua Paraguai",
-        "bairro": "B. São José",
-        "nota": "Borda inferior do loteamento, conectando-se na diagonal com a Rua Mar. Almeida."
-    },
-    "geometry": {
-        "type": "LineString",
-        "coordinates": [[-51.5342, -28.2415], [-51.5282, -28.2418]]
-    }
-},
+    <!-- Elemento onde o mapa será renderizado -->
+    <div id="map"></div>
 
-// ==========================================
-// FOLHA 3 (BAIRRO SUZANA / SÃO JORGE - SETOR SUL)
-// ==========================================
-{
-    "type": "Feature",
-    "properties": {
-        "nome_antigo": "Rua Buarque de Macedo",
-        "nome_atual": "Rua Buarque de Macedo",
-        "bairro": "B. Suzana",
-        "nota": "Eixo diagonal histórico na Folha 3 que passa em frente ao Cemitério Municipal."
-    },
-    "geometry": {
-        "type": "LineString",
-        "coordinates": [[-51.5280, -28.2530], [-51.5350, -28.2590]]
-    }
-},
-{
-    "type": "Feature",
-    "properties": {
-        "nome_antigo": "Rua David Oliveira",
-        "nome_atual": "Rua David de Oliveira",
-        "bairro": "B. Suzana",
-        "nota": "Importante via interna que corta o arruamento regular ao norte do cemitério."
-    },
-    "geometry": {
-        "type": "LineString",
-        "coordinates": [[-51.5250, -28.2535], [-51.5310, -28.2530]]
-    }
-},
+    <!-- Scripts da biblioteca Leaflet -->
+    <script src="https://unpkg.com"></script>
+    <script>
+        // 1. Inicializa o mapa focado no centro de Lagoa Vermelha, RS
+        const map = L.map('map').setView([-28.2436, -51.5251], 14);
 
-// ==========================================
-// FOLHA 13 e FOLHA 14 (TREVO VACARIA / AEROPORTO / GENTIL)
-// ==========================================
-{
-    "type": "Feature",
-    "properties": {
-        "nome_antigo": "BR 285",
-        "nome_atual": "Rodovia BR-285",
-        "bairro": "B. Industrial I / Gentil",
-        "nota": "Grande eixo rodoviário tracejado que corta diagonalmente as folhas 13 and 14."
-    },
-    "geometry": {
-        "type": "LineString",
-        "coordinates": [[-51.5210, -28.2450], [-51.5050, -28.2510]]
-    }
-},
-{
-    "type": "Feature",
-    "properties": {
-        "nome_antigo": "Rua Protazio Alves",
-        "nome_atual": "Rua Protásio Alves",
-        "bairro": "B. Alto Pedregal / Gentil",
-        "nota": "Via urbana que cruza perpendicularmente a região do Aeroporto na Folha 14."
-    },
-    "geometry": {
-        "type": "LineString",
-        "coordinates": [[-51.5120, -28.2480], [-51.5100, -28.2540]]
-    }
-},
+        // 2. Adiciona o mapa atual (OpenStreetMap) como base de fundo
+        const mapaAtual = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19,
+            attribution: '© OpenStreetMap contributors'
+        }).addTo(map);
 
-// ==========================================
-// FOLHA 6 (BAIRRO MEDIANEIRA - SETOR LESTE)
-// ==========================================
-{
-    "type": "Feature",
-    "properties": {
-        "nome_antigo": "Rua Mato Grosso do Norte",
-        "nome_atual": "Rua Mato Grosso",
-        "bairro": "B. Medianeira",
-        "nota": "Grafada originalmente com 'do Norte' na Folha 6 para diferenciação da época."
-    },
-    "geometry": {
-        "type": "LineString",
-        "coordinates": [[-51.5125, -28.2440], [-51.5120, -28.2400]]
-    }
-},
-{
-    "type": "Feature",
-    "properties": {
-        "nome_antigo": "Rua Santa Catarina",
-        "nome_atual": "Rua Santa Catarina",
-        "bairro": "B. Medianeira",
-        "nota": "Rua horizontal paralela à Rua Paraná e à Rua Tamandaré."
-    },
-    "geometry": {
-        "type": "LineString",
-        "coordinates": [[-51.5150, -28.2430], [[-51.5090, -28.2432]]]
-    }
-},
+        // 3. CONFIGURAÇÃO DA IMAGEM DO MAPA ANTIGO (SOBREPOSIÇÃO)
+        // Definição dos limites geográficos [Sudoeste, Nordeste] para encaixar o mapa histórico
+        const limitesMapaAntigo = [
+            [-28.2620, -51.5450], // Canto Inferior Esquerdo (Sudoeste)
+            [-28.2280, -51.5000]  // Canto Superior Direito (Nordeste)
+        ];
 
-// ==========================================
-// FOLHA 9 (BAIRRO TERRA DA FRATERNIDADE / BOA VISTA)
-// ==========================================
-{
-    "type": "Feature",
-    "properties": {
-        "nome_antigo": "Rua Liborio Silveira",
-        "nome_atual": "Rua Libório da Silva Silveira",
-        "bairro": "B. Boa Vista",
-        "nota": "Eixo horizontal central localizado no loteamento da Folha 9."
-    },
-    "geometry": {
-        "type": "LineString",
-        "coordinates": [[-51.5380, -28.2460], [-51.5320, -28.2465]]
-    }
-}
+        // IMPORTANTE: Substitua 'mapa_completo_lagoa.png' pelo link ou nome do seu arquivo de imagem combinado
+        const mapaAntigoCamada = L.imageOverlay('mapa_completo_lagoa.png', limitesMapaAntigo, {
+            opacity: 0.7,
+            interactive: false // Mantém desativado para o clique passar direto para as linhas das ruas abaixo
+        }).addTo(map);
+
+        // 4. BANCO DE DADOS GEOJSON UNIFICADO (TODAS AS FOLHAS)
+        const dadosRuas = {
+            "type": "FeatureCollection",
+            "features": [
+                // === FOLHA 10 (CENTRO / BAIRRO OLIVEIRA) ===
+                {
+                    "type": "Feature",
+                    "properties": {
+                        "nome_antigo": "Av. Presidente Vargas",
+                        "nome_atual": "Avenida Presidente Vargas",
+                        "bairro": "Oliveira / Centro",
+                        "nota": "Eixo principal de conexão norte-sul visível no topo da folha."
+                    },
+                    "geometry": { "type": "LineString", "coordinates": [ [-51.5295, -28.2415], [-51.5212, -28.2448] ] }
+                },
+                {
+                    "type": "Feature",
+                    "properties": {
+                        "nome_antigo": "Rua Manoel da Costa",
+                        "nome_atual": "Rua Manoel da Costa",
+                        "bairro": "Oliveira",
+                        "nota": "Cruza diagonalmente o bairro no sentido leste-oeste."
+                    },
+                    "geometry": { "type": "LineString", "coordinates": [ [-51.5320, -28.2450], [-51.5235, -28.2485] ] }
+                },
+                {
+                    "type": "Feature",
+                    "properties": {
+                        "nome_antigo": "Rua Salustiano",
+                        "nome_atual": "Rua Salustiano de Oliveira Machado",
+                        "bairro": "Oliveira",
+                        "nota": "Via vertical central que conecta a Av. Pres. Vargas à zona sul do bairro."
+                    },
+                    "geometry": { "type": "LineString", "coordinates": [ [-51.5262, -28.2425], [-51.5285, -28.2490] ] }
+                },
+                {
+                    "type": "Feature",
+                    "properties": {
+                        "nome_antigo": "Rua Marechal Floriano",
+                        "nome_atual": "Rua Marechal Floriano",
+                        "bairro": "Oliveira",
+                        "nota": "Importante via que corta horizontalmente a porção central da folha."
+                    },
+                    "geometry": { "type": "LineString", "coordinates": [ [-51.5270, -28.2460], [-51.5190, -28.2495] ] }
+                },
+                {
+                    "type": "Feature",
+                    "properties": {
+                        "nome_antigo": "Rua Bento Gonçalves",
+                        "nome_atual": "Rua Bento Gonçalves",
+                        "bairro": "Oliveira / Centro",
+                        "nota": "Alinhamento vertical que desce a partir da Av. Presidente Vargas."
+                    },
+                    "geometry": { "type": "LineString", "coordinates": [ [-51.5245, -28.2410], [-51.5255, -28.2455] ] }
+                },
+                {
+                    "type": "Feature",
+                    "properties": {
+                        "nome_antigo": "Rua De Setembro",
+                        "nome_atual": "Rua Sete de Setembro",
+                        "bairro": "Oliveira",
+                        "nota": "Grafada de forma abreviada no mapa antigo."
+                    },
+                    "geometry": { "type": "LineString", "coordinates": [ [-51.5285, -28.2430], [-51.5305, -28.2498] ] }
+                },
+                {
+                    "type": "Feature",
+                    "properties": {
+                        "nome_antigo": "Rua Marcilio Dias",
+                        "nome_atual": "Rua Marcílio Dias",
+                        "bairro": "Oliveira",
+                        "nota": "Aparece na porção inferior esquerda, próxima à legenda do bairro."
+                    },
+                    "geometry": { "type": "LineString", "coordinates": [ [-51.5250, -28.2480], [-51.5265, -28.2520] ] }
+                },
+
+                // === FOLHA 11 (COHAB I / COHAB II / OPERÁRIO) ===
+                {
+                    "type": "Feature",
+                    "properties": {
+                        "nome_antigo": "Av. Presid. Vargas",
+                        "nome_atual": "Avenida Presidente Vargas",
+                        "bairro": "COHAB I / COHAB II",
+                        "nota": "Continuação do eixo central da cidade, margeando os conjuntos habitacionais."
+                    },
+                    "geometry": { "type": "LineString", "coordinates": [ [-51.5212, -28.2448], [-51.5165, -28.2380] ] }
+                },
+                {
+                    "type": "Feature",
+                    "properties": {
+                        "nome_antigo": "Av. Julio Vanzin",
+                        "nome_atual": "Avenida Júlio Vanzin",
+                        "bairro": "Distrito Industrial II",
+                        "nota": "Larga via horizontal na porção central da imagem que corta as quadras industriais."
+                    },
+                    "geometry": { "type": "LineString", "coordinates": [ [-51.5250, -28.2410], [-51.5170, -28.2415] ] }
+                },
+                {
+                    "type": "Feature",
+                    "properties": {
+                        "nome_antigo": "Rua Vital Zambotto",
+                        "nome_atual": "Rua Vital Zambotto",
+                        "bairro": "Distrito Industrial III",
+                        "nota": "Via horizontal paralela à Júlio Vanzin, localizada um pouco mais ao sul."
+                    },
+                    "geometry": { "type": "LineString", "coordinates": [ [-51.5255, -28.2435], [-51.5172, -28.2440] ] }
+                },
+                {
+                    "type": "Feature",
+                    "properties": {
+                        "nome_antigo": "Rua Brasiliano C. da Costa e Silva",
+                        "nome_atual": "Rua Brasiliano Costa e Silva",
+                        "bairro": "Operário / COHAB II",
+                        "nota": "Corta a região residencial horizontalmente na parte superior da folha."
+                    },
+                    "geometry": { "type": "LineString", "coordinates": [ [-51.5280, -28.2375], [-51.5180, -28.2372] ] }
+                },
+
+                // === FOLHA 8 e FOLHA 7 (ZONA NORTE / PETRÓPOLIS E GAÚCHA) ===
+                {
+                    "type": "Feature",
+                    "properties": {
+                        "nome_antigo": "Av. Presid. Vargas",
+                        "nome_atual": "Avenida Presidente Vargas",
